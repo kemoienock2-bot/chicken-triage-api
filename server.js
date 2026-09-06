@@ -38,6 +38,13 @@ Return ONLY a raw JSON object (no markdown fences, no preamble) with exactly the
     });
 
     const data = await response.json();
+    console.log("Gemini raw response:", JSON.stringify(data));
+
+    if (data.error) {
+      console.error("Gemini API error:", data.error);
+      return res.status(502).json({ error: `Gemini API error: ${data.error.message || JSON.stringify(data.error)}` });
+    }
+
     const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
     const cleaned = rawText.replace(/```json|```/g, "").trim();
     const result = JSON.parse(cleaned);
